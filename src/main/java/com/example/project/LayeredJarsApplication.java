@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 @Controller
 public class LayeredJarsApplication{
-	@GetMapping
+	@GetMapping(value="/hello")
 	public String hello(){
-		return "Hello Layered Jars!";
+		return "Hello, world!";
 	}
 
 	public static void main(String[] args) {
