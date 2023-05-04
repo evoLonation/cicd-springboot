@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    - uses: actions/checkout@v2
     runs-on: ubuntu-latest
     steps:
     - name: Set up JDK    
@@ -15,7 +16,6 @@ jobs:
         java-version: 1.11
     - name: Build with Maven      
       run: mvn clean install
-    - uses: actions/checkout@v2
     - name: Build the Docker image
       run: |
         docker login --username=${{ secrets.DOCKER_USER }} --password=${{ secrets.DOCKER_PASSWORD }}
