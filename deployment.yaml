@@ -16,4 +16,4 @@ spec:
       - name: cicd-test
         image: evolonation/cicd-test:{TAG}
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
