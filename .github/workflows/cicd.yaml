@@ -7,9 +7,9 @@ on:
 
 jobs:
   build:
-    - uses: actions/checkout@v2
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2 # 获取仓库的代码文件
     - name: Set up JDK    
       uses: actions/setup-java@v1      
       with:
