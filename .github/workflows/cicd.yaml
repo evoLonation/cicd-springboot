@@ -1,0 +1,44 @@
+name: Docker Image CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up JDK    
+      uses: actions/setup-java@v1      
+      with:
+      java-version: 1.11
+    - name: Build with Maven      
+      run: mvn clean install
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: |
+        docker login --username=${{ secrets.DOCKER_USER }} --password=${{ secrets.DOCKER_PASSWORD }}
+        docker build . --file Dockerfile --tag evolonation/cicd-test:${{ github.sha }}
+        docker push evolonation/cicd-test:${{ github.sha }}
+    # k8s部署
+    - run: |
+        sed -i 's/{TAG}/${{ github.sha }}/g' deployment.yaml
+    - name: k8s deployment
+      uses: steebchen/kubectl@v2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG }}
+        version: v1.26.0
+        command: apply -f deployment.yaml
+    - name: k8s service
+      uses: steebchen/kubectl@v2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG }}
+        version: v1.26.0
+        command: apply -f service.yaml
+    - name: deployment status
+      uses: steebchen/kubectl@v2.0.0
+      with:
+        config: ${{ secrets.KUBE_CONFIG }}
+        version: v1.26.0
+        command: rollout status deployment/cicd-test
