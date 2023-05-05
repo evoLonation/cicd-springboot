@@ -1,0 +1,44 @@
+version: '3.5'
+# 网络配置
+networks:
+  backend:
+    driver: bridge
+volumes:
+  localfile:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/diamond/soft2/localfile
+  go-cache:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/diamond/soft2/soft2_backend/cache
+# 服务容器配置
+services:
+  test: # 自定义容器名称
+    build:
+      dockerfile: Dockerfile
+    privileged: true
+    expose:
+    - 8080
+    stdin_open: true                     # 打开标准输入，可以接受外部输入
+    tty: true
+    networks:
+      - backend
+    restart: always                      # 指定容器退出后的重启策略为始终重启
+db:
+  image: mysql:8.0.32
+  restart: always
+  healthcheck:
+    test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent" ]
+    interval: 3s
+    retries: 5
+    start_period: 30s
+  environment:
+    - MYSQL_DATABASE=example
+    - MYSQL_ROOT_PASSWORD=2002116yy
+  expose:
+    - 3306
